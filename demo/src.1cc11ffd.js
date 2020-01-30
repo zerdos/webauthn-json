@@ -124,20 +124,20 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.create = g;
-exports.get = h;
-exports.supported = y;
+exports.get = y;
+exports.supported = h;
 exports.schema = void 0;
 
 function e(e) {
   const t = "==".slice(0, (4 - e.length % 4) % 4),
         n = e.replace(/-/g, "+").replace(/_/g, "/") + t,
-        i = atob(n),
-        r = new ArrayBuffer(i.length),
-        a = new Uint8Array(r);
+        r = atob(n),
+        i = new ArrayBuffer(r.length),
+        a = new Uint8Array(i);
 
-  for (let e = 0; e < i.length; e++) a[e] = i.charCodeAt(e);
+  for (let e = 0; e < r.length; e++) a[e] = r.charCodeAt(e);
 
-  return r;
+  return i;
 }
 
 function t(e) {
@@ -150,17 +150,17 @@ function t(e) {
 }
 
 const n = "copy",
-      i = "convert";
+      r = "convert";
 
-function r(e, t, a) {
+function i(e, t, a) {
   if (t === n) return a;
-  if (t === i) return e(a);
-  if (t instanceof Array) return a.map(n => r(e, t[0], n));
+  if (t === r) return e(a);
+  if (t instanceof Array) return a.map(n => i(e, t[0], n));
 
   if (t instanceof Object) {
     const n = {};
 
-    for (const [i, o] of Object.entries(t)) if (i in a) null != a[i] ? n[i] = r(e, o.schema, a[i]) : n[i] = null;else if (o.required) throw new Error(`Missing key: ${i}`);
+    for (const [r, o] of Object.entries(t)) if (r in a) null != a[r] ? n[r] = i(e, o.schema, a[r]) : n[r] = null;else if (o.required) throw new Error(`Missing key: ${r}`);
 
     return n;
   }
@@ -182,33 +182,22 @@ function o(e) {
 
 const c = {
   type: a(n),
-  id: a(i),
+  id: a(r),
   transports: o(n)
 },
       s = {
-  appid: o(n),
-  txAuthSimple: o(n),
-  txAuthGeneric: o({
-    contentType: a(n),
-    content: a(i)
-  }),
-  authnSel: o([i]),
-  exts: o(n),
-  uvi: o(n),
-  loc: o(n),
-  uvm: o(n),
-  authenticatorBiometricPerfBounds: o(n)
+  appid: o(n)
 },
       l = {
   publicKey: a({
     rp: a(n),
     user: a({
-      id: a(i),
+      id: a(r),
       name: a(n),
       displayName: a(n),
       icon: o(n)
     }),
-    challenge: a(i),
+    challenge: a(r),
     pubKeyCredParams: a(n),
     timeout: o(n),
     excludeCredentials: o([c]),
@@ -221,16 +210,16 @@ const c = {
       u = {
   type: a(n),
   id: a(n),
-  rawId: a(i),
+  rawId: a(r),
   response: a({
-    clientDataJSON: a(i),
-    attestationObject: a(i)
+    clientDataJSON: a(r),
+    attestationObject: a(r)
   })
 },
       d = {
   mediation: o(n),
   publicKey: a({
-    challenge: a(i),
+    challenge: a(r),
     timeout: o(n),
     rpId: o(n),
     allowCredentials: o([c]),
@@ -242,12 +231,12 @@ const c = {
       p = {
   type: a(n),
   id: a(n),
-  rawId: a(i),
+  rawId: a(r),
   response: a({
-    clientDataJSON: a(i),
-    authenticatorData: a(i),
-    signature: a(i),
-    userHandle: a(i)
+    clientDataJSON: a(r),
+    authenticatorData: a(r),
+    signature: a(r),
+    userHandle: a(r)
   })
 },
       f = {
@@ -259,26 +248,30 @@ const c = {
 exports.schema = f;
 
 async function g(n) {
-  const i = r(e, l, n),
-        a = await navigator.credentials.create(i),
-        o = r(t, u, a);
-  return o.clientExtensionResults = a.getClientExtensionResults(), o;
+  const r = i(e, l, n),
+        a = await navigator.credentials.create(r);
+  return i(t, u, a);
 }
 
-async function h(n) {
-  const i = r(e, d, n),
-        a = await navigator.credentials.get(i),
-        o = r(t, p, a);
-  return o.clientExtensionResults = a.getClientExtensionResults(), o;
+async function y(n) {
+  const r = i(e, d, n),
+        a = await navigator.credentials.get(r);
+  return i(t, p, a);
 }
 
-function y() {
+function h() {
   return !!(navigator.credentials && navigator.credentials.create && navigator.credentials.get && window.PublicKeyCredential);
 }
 },{}],"mIWh":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
   return new (P || (P = Promise))(function (resolve, reject) {
     function fulfilled(value) {
       try {
@@ -297,9 +290,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
     }
 
     function step(result) {
-      result.done ? resolve(result.value) : new P(function (resolve) {
-        resolve(result.value);
-      }).then(fulfilled, rejected);
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
 
     step((generator = generator.apply(thisArg, _arguments || [])).next());
@@ -417,7 +408,9 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 function getRegistrations() {
   var registrations = JSON.parse(localStorage.webauthnExampleRegistrations || "[]");
@@ -539,6 +532,12 @@ window.addEventListener("load", function () {
 // Note: do not hardcode values in production.
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
   return new (P || (P = Promise))(function (resolve, reject) {
     function fulfilled(value) {
       try {
@@ -557,9 +556,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
     }
 
     function step(result) {
-      result.done ? resolve(result.value) : new P(function (resolve) {
-        resolve(result.value);
-      }).then(fulfilled, rejected);
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
     }
 
     step((generator = generator.apply(thisArg, _arguments || [])).next());
@@ -677,7 +674,9 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var webauthn_json_1 = require("@github/webauthn-json");
 
@@ -768,14 +767,27 @@ function clear() {
   });
 }
 
+function testSupported() {
+  return __awaiter(this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+      document.querySelector("#supported .status").textContent = "…";
+      document.querySelector("#supported .status").textContent = webauthn_json_1.supported() ? " ✅" : " ❌";
+      return [2
+      /*return*/
+      ];
+    });
+  });
+}
+
 window.addEventListener("load", function () {
   try {
     document.querySelector("#register").addEventListener("click", state_1.withStatus("#register .status", register));
     document.querySelector("#authenticate").addEventListener("click", state_1.withStatus("#authenticate .status", authenticate));
     document.querySelector("#clear").addEventListener("click", state_1.withStatus("#clear .status", clear));
+    document.querySelector("#supported").addEventListener("click", testSupported);
   } catch (e) {
     console.error(e);
   }
 });
 },{"@github/webauthn-json":"DDVf","./state":"mIWh"}]},{},["7QCb"], null)
-//# sourceMappingURL=src.ce34b53c.js.map
+//# sourceMappingURL=src.1cc11ffd.js.map
