@@ -19,7 +19,8 @@ async function register(): Promise<void> {
       rp: { name: "Localhost, Inc." },
       user: { id: "IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII", name: "test_user", displayName: "Test User" },
       pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-      excludeCredentials: registeredCredentials()
+      excludeCredentials: registeredCredentials(),
+      authenticatorSelection: { userVerification: "discouraged", }
     }
   }));
 }
@@ -28,7 +29,8 @@ async function authenticate(): Promise<void> {
   await get({
     publicKey: {
       challenge: "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-      allowCredentials: registeredCredentials()
+      allowCredentials: registeredCredentials(),
+      userVerification: "discouraged"
     }
   });
 }
