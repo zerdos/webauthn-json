@@ -190,7 +190,8 @@ const o = {
   appidExclude: s(n)
 },
       l = {
-  appid: s(n)
+  appid: s(n),
+  appidExclude: s(n)
 },
       u = {
   publicKey: a({
@@ -709,7 +710,10 @@ function register() {
                 type: "public-key",
                 alg: -7
               }],
-              excludeCredentials: registeredCredentials()
+              excludeCredentials: registeredCredentials(),
+              authenticatorSelection: {
+                userVerification: "discouraged"
+              }
             }
           })];
 
@@ -734,7 +738,8 @@ function authenticate() {
           , webauthn_json_1.get({
             publicKey: {
               challenge: "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-              allowCredentials: registeredCredentials()
+              allowCredentials: registeredCredentials(),
+              userVerification: "discouraged"
             }
           })];
 
@@ -783,4 +788,4 @@ window.addEventListener("load", function () {
   }
 });
 },{"@github/webauthn-json":"DDVf","./state":"mIWh"}]},{},["7QCb"], null)
-//# sourceMappingURL=src.d576becb.js.map
+//# sourceMappingURL=src.7a334bd3.js.map
